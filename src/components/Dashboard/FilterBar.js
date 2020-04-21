@@ -1,6 +1,6 @@
 import React, { Component, useState } from 'react';
-import { FixedSizeList as List } from 'react-window';
 import DatePicker from "react-datepicker";
+import { MDBDataTable } from 'mdbreact';
 import Plot from 'react-plotly.js';
 import { Range } from 'rc-slider';
 import axios from 'axios';
@@ -11,7 +11,7 @@ import 'rc-slider/assets/index.css';
 import './filter.css'
 
 const querystring = require('querystring');
-const apiEndpoint = 'http://api.parkingmanagerapp.com';
+const apiEndpoint = 'http://localhost:8080';
 
 /**
 * Converts a day number to a string.
@@ -103,13 +103,6 @@ export default class FilterView extends Component {
                     fillViolation(violationPerType, ticket, 'violation');
                     fillViolation(violationPerStatus, ticket, 'status');
 
-
-                    if (!violationPerLocation[ticket.location]) {
-                        violationPerLocation[ticket.location] = [];
-                    }
-
-                    violationPerLocation[ticket.location].push(ticket);
-
                     locations.set(ticket.location, 1 + (locations.get(ticket.location) || 0));
                     violations.set(ticket.violation, 1 + (violations.get(ticket.violation) || 0));
                     status.set(ticket.status, 1 + (status.get(ticket.status) || 0));
@@ -145,9 +138,6 @@ export default class FilterView extends Component {
                     violationPerStatus: violationPerStatus,
                     violationPerDay: violationPerDay,
                 });
-
-                console.log(violationPerDay);
-                console.log(Object.values(violationPerLocation).map(violationArray => violationArray.length));
             });
     }
 
@@ -185,13 +175,169 @@ export default class FilterView extends Component {
 
     handleGetFormattedTime = _minutes => {
         var hours = Math.floor(_minutes / 60);
-        var minutes = _minutes % 60;
+        var minutes = Math.floor(_minutes % 60);
         var ampm = hours >= 12 ? 'pm' : 'am';
         hours = hours % 12;
         hours = hours ? hours : 12; // the hour '0' should be '12'
         minutes = minutes < 10 ? '0'+minutes : minutes;
         var strTime = hours + ':' + minutes + ' ' + ampm;
         return strTime;
+    }
+
+    renderLocationTableData = () => {
+        const tickets = this.state.violationPerLocation;
+        const data = {
+            columns: [
+                {
+                    label: 'Location',
+                    field: 'location',
+                    sort: 'asc',
+                    width: 250,
+                },
+                {
+                    label: 'Mean Time',
+                    field: 'meanTime',
+                    sort: 'asc',
+                    width: 250,
+                },
+                {
+                    label: 'Total Count',
+                    field: 'count',
+                    sort: 'asc',
+                    width: 250,
+                }
+            ],
+            rows: Object.values(tickets).map((dayTickets) => {
+                let average = 0;
+                let count = 0;
+                let location = '';
+                dayTickets.forEach((ticket) => {
+                    const date = new Date(ticket.createdAt);
+                    location = ticket.location;
+
+                    average += date.getMinutes() + date.getHours() * 60;
+
+                    count++;
+                });
+
+                average /= count;
+
+                average = this.handleGetFormattedTime(average);
+
+                return {
+                    location: location,
+                    meanTime: average,
+                    count: count,
+                };
+            }),
+        }
+
+        return data;
+    };
+
+    renderTypeTableData = () => {
+        const tickets = this.state.violationPerType;
+
+        const data = {
+            columns: [
+                {
+                    label: 'Violation',
+                    field: 'violation',
+                    sort: 'asc',
+                    width: 250,
+                },
+                {
+                    label: 'Mean Time',
+                    field: 'meanTime',
+                    sort: 'asc',
+                    width: 250,
+                },
+                {
+                    label: 'Total Count',
+                    field: 'count',
+                    sort: 'asc',
+                    width: 250,
+                }
+            ],
+            rows: Object.values(tickets).map((dayTickets) => {
+                let average = 0;
+                let count = 0;
+                let violation = '';
+                dayTickets.forEach((ticket) => {
+                    const date = new Date(ticket.createdAt);
+                    violation = ticket.violation;
+
+                    average += date.getMinutes() + date.getHours() * 60;
+
+                    count++;
+                });
+
+                average /= count;
+
+                average = this.handleGetFormattedTime(average);
+
+                return {
+                    violation: violation,
+                    meanTime: average,
+                    count: count,
+                };
+            }),
+        }
+
+        return data;
+    }
+
+    renderDayTableData = () => {
+        const tickets = this.state.violationPerDay;
+
+        const data = {
+            columns: [
+                {
+                    label: 'Day',
+                    field: 'day',
+                    sort: 'asc',
+                    width: 250,
+                },
+                {
+                    label: 'Mean Time',
+                    field: 'meanTime',
+                    sort: 'asc',
+                    width: 250,
+                },
+                {
+                    label: 'Total Count',
+                    field: 'count',
+                    sort: 'asc',
+                    width: 250,
+                }
+            ],
+            rows: Object.values(tickets).map((dayTickets) => {
+                let average = 0;
+                let count = 0;
+                let day = new Date();
+                dayTickets.forEach((ticket) => {
+                    const date = new Date(ticket.createdAt);
+                    day = date.getDay();
+
+                    average += date.getMinutes() + date.getHours() * 60;
+
+                    count++;
+                });
+
+                average /= count;
+
+                average = this.handleGetFormattedTime(average);
+                day = dayOfWeekAsString(day);
+
+                return {
+                    day: day,
+                    meanTime: average,
+                    count: count,
+                };
+            }),
+        }
+
+        return data;
     }
 
     renderViolationDivs() {
@@ -252,10 +398,7 @@ export default class FilterView extends Component {
             violationPerDay, 
             violationPerLocation,
             violationPerType,
-            date, date_1, date_2, date_3, date_4, 
-            day0tix, day1tix, day2tix, day3tix, day4tix,
         } = this.state;
-        //var month = (date.getMonth() + 1).toString();
         
         return (
             // <div className="container border border-danger">
@@ -276,157 +419,183 @@ export default class FilterView extends Component {
             // </div>
 
 
-            <div>
-
-                <Plot   // Violation per location pie chart
-                    data={[
-                    {
-                        values: Object.values(violationPerLocation).map(violationArray => violationArray.length),
-                        labels: Object.keys(violationPerLocation),
-                      type: 'pie'
-                    }
-                    ]}
-                    layout={ {width: 380, height: 380, title: 'Violations Per Location'} }
-
-                />
-                <Plot   // Violation type pie chart
-                    data={[
-                        {
-                            values: Object.values(violationPerType).map(violationArray => violationArray.length),
-                            labels: Object.keys(violationPerType),
-                            type: 'pie'
-                    }
-                    ]}
-                    layout={ {width: 380, height: 380, title: 'Violation Type Ratio'} }
-
-                />
-                <Plot   // Violations per day bar graph
-                    data={[
-                        {
-                            x: Object.keys(violationPerDay).map(intDay => dayOfWeekAsString(intDay)),
-                            y: Object.values(violationPerDay).map(violationArray => violationArray.length),
-                            type: 'bar'
-                    }
-                    ]}
-                    layout={ {width: 380, height: 380, title: 'Violations Per Day', xaxis:{title:'Day'}, yaxis:{title:'Violations'}} }
-
-                    
-                />
-
-                <div class="container filter-container">
-                    <div class="top-padding"/>
-                    <div class="row row-label">
-                        Date:
-                    </div>
-                    <div class="row">
-                        <div class="col-6 text-center">
-                            <label>Start Day</label>
-                            <div>
-                                <DatePicker
-                                selected={this.state.startDate}
-                                onChange={this.handleStartDateChange}
+            <div class="filter-main">
+                <div class="row">
+                    <div class="col-3 side-bar">
+                        <div class="filter-container">
+                            <div class="top-padding"/>
+                            <div class="row row-label">
+                                Date:
+                            </div>
+                            <div class="row">
+                                <div class="col-6 text-center">
+                                    <label>Start Day</label>
+                                    <div>
+                                        <DatePicker
+                                        selected={this.state.startDate}
+                                        onChange={this.handleStartDateChange}
+                                        />
+        
+                                    </div>
+                                </div>
+                                <div class="col-6 text-center">
+                                <label>End Day</label>
+        
+                                    <DatePicker
+                                selected={this.state.endDate}
+                                onChange={this.handleEndDateChange}
                                 />
-
+                                </div>
+                            </div>
+        
+                            <hr/>
+        
+                            <div class="row row-label">
+                                Time of Day:
+                            </div>
+                            <div class="row">
+                                <div class="col-6 text-center">
+                                <label>{
+                                    <label>{this.handleGetFormattedTime(this.state.startDay)}</label>
+                                }</label>
+                                </div>
+                                <div class="col-6 text-center">
+                                <label>{
+                                    <label>{this.handleGetFormattedTime(this.state.endDay)}</label>
+                                }</label>
+                                </div>
+                            </div>
+        
+                            <div class="row range">
+                                <div class="col-1"></div>
+                                <div class="col-10">
+                                <Range
+                                    min={0}
+                                    max={1440}
+                                    allowCross={false}
+                                    defaultValue={[0, 1440]}
+                                    onChange={this.handleSliderChange}
+                                    onAfterChange={this.handleSliderDoneChange}
+                                />
+                                </div>
+                                <div class="col-1"></div>
+                            </div>
+        
+                            <hr/>
+        
+                            <div class="row row-label">
+                                Violation Types:
+                            </div>
+                            <div class="row">
+                                <div class="col-1"></div>
+                                <div class="col-10 row-container">
+                                    <hr/>
+                                    {this.renderViolationDivs()}
+                                </div>
+                                <div class="col-1"></div>
+                            </div>
+        
+                            <hr/>
+        
+                            <div class="row row-label">
+                                Locations:
+                            </div>
+        
+                            <div class="row">
+                                <div class="col-1"></div>
+                                <div class="col-10 row-container">
+                                    <hr/>
+                                    {this.renderLocationDivs()}
+                                </div>
+                                <div class="col-1"></div>
+                            </div>
+                            <div class="row row-label">
+                                
                             </div>
                         </div>
-                        <div class="col-6 text-center">
-                        <label>End Day</label>
-
-                            <DatePicker
-                        selected={this.state.endDate}
-                        onChange={this.handleEndDateChange}
-                        />
+                    </div>
+                    <div class="col-9 charts-area">
+                        <h1 style={{marginTop: 15}}>General Violation Information</h1>
+                        <hr/>
+                        <div class="row text-center">
+                            <div class="col-4 table-data left-most">
+                                <h2>Violation Per Location</h2>
+                                <hr/>
+                                <MDBDataTable
+                                    scrollY
+                                    maxHeight="150px"
+                                    striped
+                                    bordered
+                                    small
+                                    data={this.renderLocationTableData()}
+                                />
+                            </div>
+                            <div class="col-4 table-data center">
+                                <h2>Violation Per Type</h2>
+                                <hr/>
+                                <MDBDataTable
+                                        scrollY
+                                        maxHeight="150px"
+                                        striped
+                                        bordered
+                                        small
+                                        data={this.renderTypeTableData()}
+                                    />
+                            </div>
+                            <div class="col-4 table-data right-most">
+                                <h2>Violation Per Day</h2>
+                                <hr/>
+                                <MDBDataTable
+                                    scrollY
+                                    maxHeight="150px"
+                                    striped
+                                    bordered
+                                    small
+                                    data={this.renderDayTableData()}
+                                />
+                            </div>
                         </div>
-                    </div>
-
-                    <hr/>
-
-                    <div class="row row-label">
-                        Time of Day:
-                    </div>
-                    <div class="row">
-                        <div class="col-6 text-center">
-                        <label>{
-                            <label>{this.handleGetFormattedTime(this.state.startDay)}</label>
-                        }</label>
+                        <div class="row text-center">
+                            <div class="col-4 left-most">
+                                <Plot   // Violation per location pie chart
+                                    data={[
+                                    {
+                                        values: Object.values(violationPerLocation).map(violationArray => violationArray.length),
+                                        labels: Object.keys(violationPerLocation),
+                                        type: 'pie'
+                                    }
+                                    ]}
+                                    layout={ {width: 325, height: 325, title: 'Violation Location Ratio'} }
+                                />
+                            </div>
+                            <div class="col-4 center">
+                                <Plot   // Violation type pie chart
+                                    data={[
+                                        {
+                                            values: Object.values(violationPerType).map(violationArray => violationArray.length),
+                                            labels: Object.keys(violationPerType),
+                                            type: 'pie'
+                                    }
+                                    ]}
+                                    layout={ {width: 325, height: 325, title: 'Violation Type Ratio'} }
+                                />                         
+                            </div>
+                            <div class="col-4 right-most">
+                                <Plot   // Violations per day bar graph
+                                    data={[
+                                        {
+                                            x: Object.keys(violationPerDay).map(intDay => dayOfWeekAsString(intDay)),
+                                            y: Object.values(violationPerDay).map(violationArray => violationArray.length),
+                                            type: 'bar'
+                                    }
+                                    ]}
+                                    layout={ {width: 325, height: 325, title: 'Violations Per Day Plot', xaxis:{title:'Day'}, yaxis:{title:'Violations'}} }
+                                />                              
+                            </div>
                         </div>
-                        <div class="col-6 text-center">
-                        <label>{
-                            <label>{this.handleGetFormattedTime(this.state.endDay)}</label>
-                        }</label>
-                        </div>
-                    </div>
-
-                    <div class="row range">
-                        <div class="col-1"></div>
-                        <div class="col-10">
-                        <Range
-                            min={0}
-                            max={1440}
-                            allowCross={false}
-                            defaultValue={[0, 1440]}
-                            onChange={this.handleSliderChange}
-                            onAfterChange={this.handleSliderDoneChange}
-                        />
-                        </div>
-                        <div class="col-1"></div>
-                    </div>
-
-                    <hr/>
-
-                    <div class="row row-label">
-                        Violation Types:
-                    </div>
-                    <div class="row">
-                        <div class="col-1"></div>
-                        <div class="col-10 row-container">
-                            <hr/>
-                            {this.renderViolationDivs()}
-                        </div>
-                        <div class="col-1"></div>
-                    </div>
-
-                    <hr/>
-
-                    <div class="row row-label">
-                        Locations:
-                    </div>
-
-                    <div class="row">
-                        <div class="col-1"></div>
-                        <div class="col-10 row-container">
-                            <hr/>
-                            {this.renderLocationDivs()}
-                        </div>
-                        <div class="col-1"></div>
-                    </div>
-                    <div class="row row-label">
-                        
                     </div>
                 </div>
             </div>
-
-            // <div>
-            //     <DatePicker
-            //         selected={this.state.startDate}
-            //         onChange={this.handleStartDateChange}
-            //     />
-            //     <DatePicker
-            //         selected={this.state.endDate}
-            //         onChange={this.handleEndDateChange}
-            //     />
-            //     <div class="grid-container slider-grid">
-
-            //         <div class="grid-item slider-date">
-
-            //         </div>
-
-            //     </div>
-
-
-
-            // </div>
-
         );
     }
 }

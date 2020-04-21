@@ -1,6 +1,7 @@
 import React, { useState, Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
+import FilterBar from '../Dashboard/FilterBar';
 import Navbar from '../Navbar/Navbar';
 import Sidebar from '../NavbarToggleButton/Sidebar';
 import Overlay from '../Overlay/Overlay';
@@ -43,9 +44,11 @@ class Dashboard extends Component {
         return(
             <div style={{height: '100vh'}}>
             <Navbar navbarToggleHandler={this.navbarToggleHandler} />
+            <h2 style={{marginLeft: 15}}>Dashboard</h2>
+            <hr/>
+            <FilterBar />
             <Sidebar show={this.state.sideBarOpen}/>
             {overlay}
-            <h1>Dashboard</h1>
             </div>
 
         );

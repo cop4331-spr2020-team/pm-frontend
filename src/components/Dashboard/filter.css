@@ -26,3 +26,45 @@
     border-radius: 7px;
     margin-bottom: 10px;
 }
+
+.charts-area {
+    border-style: solid;
+    border-radius: 10px;
+    border-width: 1.5px;
+    border-color: rgba(0, 0, 0, .3);
+}
+
+.filter-main {
+    margin: 25px;
+}
+
+.side-bar {
+    padding-left: 35px;
+    zoom: .75;
+}
+
+.my-custom-scrollbar {
+    position: relative;
+    height: 200px;
+    overflow: auto;
+}
+.table-wrapper-scroll-y {
+    display: block;
+}
+
+.table-data {
+    zoom: .85;
+}
+
+.left-most {
+    border-right: 1px solid rgba(0, 0, 0, .15);
+}
+
+.center {
+    border-right: 1px solid rgba(0, 0, 0, .15);
+    border-left: 1px solid rgba(0, 0, 0, .15);
+}
+
+.right-most {
+    border-left: 1px solid rgba(0, 0, 0, .15);
+}
