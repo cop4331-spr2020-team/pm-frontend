@@ -401,27 +401,10 @@ export default class FilterView extends Component {
         } = this.state;
         
         return (
-            // <div className="container border border-danger">
-            //     <div clasName="row">
-            //         <div className="col">
-            //             tt
-            //         </div>
-            //         <div className="col">
-            //             tt
-            //         </div>
-            //         <div className="col border border-primary">
-            //             text
-            //         </div>
-            //         <div className="col border border-primary">
-            //             text
-            //         </div>
-            //     </div>
-            // </div>
-
-
             <div class="filter-main">
-                <div class="row">
-                    <div class="col-3 side-bar">
+                <div class="row justify-content-center">
+                    {/* ml-3 for filter */}
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-sm d-flex flex-row side-bar">
                         <div class="filter-container">
                             <div class="top-padding"/>
                             <div class="row row-label">
@@ -514,8 +497,8 @@ export default class FilterView extends Component {
                             </div>
                         </div>
                     </div>
-                    <div class="col-9 charts-area">
-                        <h1 style={{marginTop: 15}}>General Violation Information</h1>
+                    <div class="col-9 col-md-9 col-sm-12 col-xs-12 charts-area">
+                        <h1 style={{marginTop: 1}}>General Violation Information</h1>
                         <hr/>
                         <div class="row text-center">
                             <div class="col-4 table-data left-most">

@@ -45,13 +45,13 @@ class Dashboard extends Component {
             <div style={{height: '100vh'}}>
             <Navbar navbarToggleHandler={this.navbarToggleHandler} />
             <div class="row">
-                <div class="col-1"/>
-                <div class="col-10">
-                    <h2 style={{marginLeft: 15}}>Dashboard</h2>
+                <div class="container-fluid">
+                    <div className="row d-flex flex-row justify-content-center">
+                    <h2 style={{marginLeft: 45}}>Dashboard</h2>
                     <hr/>
                     <FilterBar />
+                    </div>
                 </div>
-                <div class="col-1"/>
             </div>
             <Sidebar show={this.state.sideBarOpen}/>
             {overlay}

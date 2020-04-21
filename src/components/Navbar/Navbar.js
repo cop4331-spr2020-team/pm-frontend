@@ -6,8 +6,9 @@ import NavbarToggleButton from  '../NavbarToggleButton/NavbarToggleButton';
 import './Navbar.css'
 const Navbar = props => (
 
+    <div className="container-fluid">
     <header className="toolbar">
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+    <nav className="navbar navbar-expand-lg navbar-light bg-light w-100">
         {/* Show this on mobile to medium screens */}
         <a className="navbar-brand d-lg-none brand" href="#"><FaParking style={{color: '#d39e00', fontSize:'24px'}}/></a>
         {/* Navbar Content */}
@@ -62,6 +63,8 @@ const Navbar = props => (
         </div>
     </nav>
     </header>
+    </div>
+
 );
 
 

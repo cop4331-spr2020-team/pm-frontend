@@ -20,7 +20,6 @@ const Sidebar = props => {
           </div>
 
           <ul className="list-unstyled components">
-            <p>text here</p>
             <li className="active">
               <a href="#profileSubmenu" data-toggle="collapse" aria-expanded="false" className="dropdown-toggle" id="dropdown-toggle">Profile</a>
               <ul className="collapse list-unstyled" id="profileSubmenu">

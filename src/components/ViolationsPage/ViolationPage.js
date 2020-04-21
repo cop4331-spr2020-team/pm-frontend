@@ -202,7 +202,7 @@ const ViolationPage = () => {
     };
 
     if(!loading && !loggedIn){
-        return <Redirect to ='/login' />
+        return <Redirect to ='/' />
     }
         return (
             <div className="container-fluid">
