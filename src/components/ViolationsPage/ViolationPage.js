@@ -202,7 +202,7 @@ const ViolationPage = () => {
     };
 
     if(!loading && !loggedIn){
-        return <Redirect to ='/' />
+        return <Redirect to ='/'/>
     }
         return (
             <div className="container-fluid">
@@ -215,7 +215,7 @@ const ViolationPage = () => {
                         onChange={handleChange}
                     />
                     <Button className="btn-warning" onClick={() => setSearch(true)}>Search</Button>
-
+                    <Button className="ml-auto"><a href="/Dashboard">Back</a></Button>
                 </div>
                 <Violations violations={currentViolations} loading={loading} modal={displayModal}/> {/*load in tickets 4 at a time */}  
                             
