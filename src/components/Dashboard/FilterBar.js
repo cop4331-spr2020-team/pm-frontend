@@ -11,7 +11,7 @@ import 'rc-slider/assets/index.css';
 import './filter.css'
 
 const querystring = require('querystring');
-const apiEndpoint = 'http://localhost:8080';
+const apiEndpoint = 'http://api.parkingmanagerapp.com';
 
 /**
 * Converts a day number to a string.

@@ -44,9 +44,15 @@ class Dashboard extends Component {
         return(
             <div style={{height: '100vh'}}>
             <Navbar navbarToggleHandler={this.navbarToggleHandler} />
-            <h2 style={{marginLeft: 15}}>Dashboard</h2>
-            <hr/>
-            <FilterBar />
+            <div class="row">
+                <div class="col-1"/>
+                <div class="col-10">
+                    <h2 style={{marginLeft: 15}}>Dashboard</h2>
+                    <hr/>
+                    <FilterBar />
+                </div>
+                <div class="col-1"/>
+            </div>
             <Sidebar show={this.state.sideBarOpen}/>
             {overlay}
             </div>
