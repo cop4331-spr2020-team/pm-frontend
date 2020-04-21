@@ -91,7 +91,7 @@ const ViolationPage = () => {
         } 
         // Check if user token
         if(!loggedIn) {
-            getUserInfo();
+            //getUserInfo();
         }
         
        // Refresh posts after editing a ticket
