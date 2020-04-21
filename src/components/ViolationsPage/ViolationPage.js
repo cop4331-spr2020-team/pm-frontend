@@ -48,17 +48,20 @@ const ViolationPage = () => {
         const fetchPosts = async () => {
             setLoading(true);
             try {
-                const res = await axios.get('http://api.parkingmanagerapp.com/tickets/query',{ withCredentials: true,
+                const res = await axios.get('/tickets/query',{ withCredentials: true,
                     params: {
                         _userId: [userId]
                     }
                 })
-                if(res.status == 200) {
+                if(res.status === 200) {
                     setLoading(false);
                     setViolations(res.data.docs.filter(violation => violation._id.includes(searchTerm)));
                     setCurrentPage(1);
                 }
-                else setloggedIn(false);
+                else {
+                    setLoading(false);
+                    setloggedIn(false);
+                }
             }
             catch(error) {
                 console.log(error);
@@ -69,7 +72,7 @@ const ViolationPage = () => {
         const getUserInfo = async () => {
             setLoading(true);
             try{
-                const res = await axios.get('http://api.parkingmanagerapp.com/auth/user_info',{ withCredentials: true})
+                const res = await axios.get('/auth/user_info',{ withCredentials: true})
                 if (res.status != 200){
                     setLoading(false);
                     setloggedIn(false);
@@ -91,7 +94,7 @@ const ViolationPage = () => {
         } 
         // Check if user token
         if(!loggedIn) {
-            //getUserInfo();
+            getUserInfo();
         }
         
        // Refresh posts after editing a ticket
@@ -103,9 +106,9 @@ const ViolationPage = () => {
 
         // Sets initial modal information
         if(modal == true){
-            setAViolation(violations.filter(function(obj){
-                return obj._id == selected;
-            }))
+            // setAViolation(violations.filter(function(obj){
+            //     return obj._id == selected;
+            // }))
 
             aViolation.map(item=>(
                 setPlate(item.license_plate),
@@ -122,7 +125,7 @@ const ViolationPage = () => {
         }
 
         // To prevent problems with updating page
-        if (counter > 8) {
+        if (counter > 4) {
             clearInterval(s);
         }
        
@@ -155,7 +158,7 @@ const ViolationPage = () => {
     // Request to edit a ticket
     const editViolation = (event) => {
  
-        axios.post(`http://api.parkingmanagerapp.com/tickets/${selected}`, { 
+        axios.post(`/tickets/${selected}`, { 
             withCredentials:true,
             license_plate: selectedLicensePlate,
             violation: selectedViolationType,
@@ -185,7 +188,10 @@ const ViolationPage = () => {
 
     // Sets the ID for the ticket that was selected to be displayed on Modal
     const displayModal = id =>{
-        setSelected(id)
+        setSelected(id);
+        setAViolation(violations.filter(function(obj){
+            return obj._id == id;
+        }))
         setModal(true)
     };
 
@@ -255,6 +261,7 @@ const ViolationPage = () => {
                                         >
                                         <option>Garage A</option>
                                         <option>Garage B</option>
+                                        <option>Garage C</option>
                                     </Input>
                                 </FormGroup>
                                 <FormGroup>
