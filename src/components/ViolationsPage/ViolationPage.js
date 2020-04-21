@@ -50,9 +50,12 @@ const ViolationPage = () => {
             try {
                 const res = await axios.get('http://api.parkingmanagerapp.com/tickets/query',{ withCredentials: true,
                     params: {
-                        _userId: [userId]
+                        _userId: []
                     }
                 })
+
+                console.log(res);
+                console.log('test');
                 if(res.status == 200) {
                     setLoading(false);
                     setViolations(res.data.docs.filter(violation => violation._id.includes(searchTerm)));
@@ -69,7 +72,8 @@ const ViolationPage = () => {
         const getUserInfo = async () => {
             setLoading(true);
             try{
-                const res = await axios.get('http://api.parkingmanagerapp.com/auth/user_info',{ withCredentials: true})
+                //const res = await axios.get('http://api.parkingmanagerapp.com/auth/user_info',{ withCredentials: true})
+                /*
                 if (res.status != 200){
                     setLoading(false);
                     setloggedIn(false);
@@ -79,11 +83,12 @@ const ViolationPage = () => {
                     setloggedIn(false);
                 }
                 else  {
+                */
                     setloggedIn(true);
                     setLoading(false);
-                    setUserId(res.data.userId);
+                    //setUserId(res.data.userId);
                     fetchPosts();
-                }
+                //}
             }
             catch(error) {
                 console.log(error);
@@ -91,7 +96,7 @@ const ViolationPage = () => {
         } 
         // Check if user token
         if(!loggedIn) {
-            //getUserInfo();
+            getUserInfo();
         }
         
        // Refresh posts after editing a ticket
@@ -164,6 +169,7 @@ const ViolationPage = () => {
             status: selectedStatus    
         })
 		.then(result => {
+            console.log(result);
 			if (result.status === 200) {
                 console.log('success');
                 setEdited(true);
