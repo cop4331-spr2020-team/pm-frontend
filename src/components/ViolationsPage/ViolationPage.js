@@ -61,7 +61,10 @@ const ViolationPage = () => {
                     setViolations(res.data.docs.filter(violation => violation._id.includes(searchTerm)));
                     setCurrentPage(1);
                 }
-                else setloggedIn(false);
+                else {
+                    setLoading(false);
+                    setloggedIn(false);
+                }
             }
             catch(error) {
                 console.log(error);
@@ -108,9 +111,9 @@ const ViolationPage = () => {
 
         // Sets initial modal information
         if(modal == true){
-            setAViolation(violations.filter(function(obj){
-                return obj._id == selected;
-            }))
+            // setAViolation(violations.filter(function(obj){
+            //     return obj._id == selected;
+            // }))
 
             aViolation.map(item=>(
                 setPlate(item.license_plate),
@@ -127,7 +130,7 @@ const ViolationPage = () => {
         }
 
         // To prevent problems with updating page
-        if (counter > 8) {
+        if (counter > 4) {
             clearInterval(s);
         }
        
@@ -160,7 +163,7 @@ const ViolationPage = () => {
     // Request to edit a ticket
     const editViolation = (event) => {
  
-        axios.post(`http://api.parkingmanagerapp.com/tickets/${selected}`, { 
+        axios.post(`/tickets/${selected}`, { 
             withCredentials:true,
             license_plate: selectedLicensePlate,
             violation: selectedViolationType,
@@ -191,7 +194,10 @@ const ViolationPage = () => {
 
     // Sets the ID for the ticket that was selected to be displayed on Modal
     const displayModal = id =>{
-        setSelected(id)
+        setSelected(id);
+        setAViolation(violations.filter(function(obj){
+            return obj._id == id;
+        }))
         setModal(true)
     };
 
@@ -261,6 +267,7 @@ const ViolationPage = () => {
                                         >
                                         <option>Garage A</option>
                                         <option>Garage B</option>
+                                        <option>Garage C</option>
                                     </Input>
                                 </FormGroup>
                                 <FormGroup>

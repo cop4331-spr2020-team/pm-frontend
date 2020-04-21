@@ -68,7 +68,7 @@ export default class ResetPassword extends Component {
 
     render() {
             return(
-                <Form className="col-lg-6 container-fluid p-3 my-3 mt-5 bg-light rounded">
+                <Form className="col-lg-4 container-fluid p-3 my-3 mt-5 bg-light rounded">
                     {this.state.successEmail && <Alert color="success">
                         Email for password reset successfully sent! 
                         Please wait 60 seconds before sending 
@@ -97,6 +97,7 @@ export default class ResetPassword extends Component {
                             {this.state.loading && <Spinner color="primary"/>} {/*Loading animation*/}
                             Reset Password
                         </Button>
+                        <Link to="./" className="register-link"><span className="ml-2">Go back to login page</span></Link>
                   
                 </Form>
             );
